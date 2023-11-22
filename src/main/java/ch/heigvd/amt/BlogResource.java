@@ -33,6 +33,7 @@ public class BlogResource {
             for (Post post : blogService.findAllPosts()) {
                 TUrl url = new TUrl();
                 url.setLoc("http://localhost:8080/posts/" + post.getSlug() + ".html");
+                url.setLastmod(post.getDate().toString());
                 urlSet.getUrl().add(url);
             }
 
