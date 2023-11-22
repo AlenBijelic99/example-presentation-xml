@@ -6,6 +6,10 @@ import io.smallrye.common.annotation.Blocking;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.Marshaller;
+
+import java.io.StringWriter;
 
 @Path("/")
 public class BlogResource {
@@ -15,6 +19,30 @@ public class BlogResource {
 
     @Inject
     Template index;
+
+    @Blocking
+    @GET()
+    @Path("/sitemap.xml")
+    @Produces(MediaType.APPLICATION_XML)
+    public String sitemap() {
+        try {
+            JAXBContext jaxbContext = JAXBContext.newInstance(Urlset.class);
+            Marshaller marshaller = jaxbContext.createMarshaller();
+
+            Urlset urlSet = new Urlset();
+            for (Post post : blogService.findAllPosts()) {
+                TUrl url = new TUrl();
+                url.setLoc("http://localhost:8080/posts/" + post.getSlug() + ".html");
+                urlSet.getUrl().add(url);
+            }
+
+            StringWriter writer = new StringWriter();
+            marshaller.marshal(urlSet, writer);
+            return writer.toString();
+        } catch (Exception e) {
+            return "<error>Erreur lors de la génération du sitemap</error>";
+        }
+    }
 
     @Blocking
     @GET

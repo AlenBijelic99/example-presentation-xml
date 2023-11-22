@@ -81,7 +81,7 @@
           <!-- The package of your generated sources -->
           <packageName>ch.heigvd.amt</packageName>
           <sources>
-            <source>src/main/resources/xml/test.xsd</source>
+            <source>src/main/resources/xml/sitemap.xsd</source>
           </sources>
         </configuration>
       </plugin>
