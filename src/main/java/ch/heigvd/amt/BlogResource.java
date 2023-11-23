@@ -26,17 +26,29 @@ public class BlogResource {
     @Produces(MediaType.APPLICATION_XML)
     public String sitemap() {
         try {
+            // Init marshaller
             JAXBContext jaxbContext = JAXBContext.newInstance(Urlset.class);
             Marshaller marshaller = jaxbContext.createMarshaller();
 
+            // Add URls to sitemap
             Urlset urlSet = new Urlset();
+            
+            // Add root url
+            TUrl rootUrl = new TUrl();
+            rootUrl.setLoc("http://localhost:8080/");
+            urlSet.getUrl().add(rootUrl);
+
+            // Add posts urls
             for (Post post : blogService.findAllPosts()) {
+                // Add url with location and lastmod
                 TUrl url = new TUrl();
                 url.setLoc("http://localhost:8080/posts/" + post.getSlug() + ".html");
                 url.setLastmod(post.getDate().toString());
+                // Add in set
                 urlSet.getUrl().add(url);
             }
 
+            // Format to XML
             StringWriter writer = new StringWriter();
             marshaller.marshal(urlSet, writer);
             return writer.toString();
